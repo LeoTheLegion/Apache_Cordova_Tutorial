@@ -2,17 +2,17 @@
 (function () {
 
     /* ---------------------------------- Local Variables ---------------------------------- */
+    HomeView.prototype.template = Handlebars.compile($("#home-tpl").html());
+    EmployeeListView.prototype.template = Handlebars.compile($("#employee-list-tpl").html());
+    
     var service = new EmployeeService();
+    
     service.initialize().done(function () {
-        console.log("Service initialized");
+        $('body').html(new HomeView(service).render().$el);
     });
 
     /* --------------------------------- Event Registration -------------------------------- */
-    $('.search-key').on('keyup', findByName);
-    $('.help-btn').on('click', function() {
-        alert("Employee Directory v3.4");
-    });
-
+    
     document.addEventListener('deviceready', function () {
         if (navigator.notification) { // Override default HTML alert with native dialog
             window.alert = function (message) {
@@ -24,19 +24,11 @@
                 );
             };
         }
+
+        FastClick.attach(document.body);
       }, false);
 
     /* ---------------------------------- Local Functions ---------------------------------- */
-    function findByName() {
-        service.findByName($('.search-key').val()).done(function (employees) {
-            var l = employees.length;
-            var e;
-            $('.employee-list').empty();
-            for (var i = 0; i < l; i++) {
-                e = employees[i];
-                $('.employee-list').append('<li><a href="#employees/' + e.id + '">' + e.firstName + ' ' + e.lastName + '</a></li>');
-            }
-        });
-    }
+    
 
 }());
